@@ -1,5 +1,12 @@
-# Environment
-1. Create a CONDA environment with python version 3.7
-2. Install the necessary packages via `pip install spark-nlp==2.5.1 pyspark==2.4.4 ipython pandas`
-3. Install more packages through CONDA via `conda install -c cyclus java-jdk`
+# Quick Start
+This is to just download the ToneIt app and utilize the example
+1. Clone the repository
 
+# Extensive Start
+This is to build the model from scratch yourself
+1. Clone the repository
+2. Open the `CreateModel.ipynb` file in a GoogleCOLAB environment
+3. Upload the trainTone.txt file to the GoogleCOLAB environment
+4. Run the `CreateModel.ipynb` file
+5. Download the `ToneItPipeline.tar.gz` archive from the GoogleCOLAB environment
+6. Proceed to QuickStart with your ToneItPipeline model
