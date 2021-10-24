@@ -5,16 +5,15 @@ import random
 import html2text
 from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
+import sparknlp
+sparknlp.start()
+from pyspark.ml import PipelineModel
+from sparknlp.base import LightPipeline
 
-
-tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
-
-testArray = ["happy", "sad", "angry", "surprising", "loving"]
-def predict_with_engine(input) -> str:
+def predict_with_engine(engine, input) -> str:
     #use engine to tranlate the input
-    #return mood (string)
-    return testArray[random.randint(0, len(testArray) - 1)]
-
+    result = engine.annotate(input)['class'][0]
+    return result
 
 def html_to_string(link) -> list:
     paragraphs_list = []
@@ -31,12 +30,12 @@ def html_to_string(link) -> list:
 
 #predicts every sentences in paragraph and match with its tone
 #returns Tuple: ({tone: [indices of sentences] ...}, [best predictions])
-def predict_sentences(sentence_arr):
+def predict_sentences(engine, sentence_arr):
     sentence_result_dict = defaultdict(lambda: [])
     if len(sentence_arr) == 0:
         return (0, "DNE")
     for index, sentence in enumerate(sentence_arr):
-        prediction = predict_with_engine(sentence)
+        prediction = predict_with_engine(engine, sentence)
         sentence_result_dict[prediction].append(index)
     maxNum = 0
     bestResult = []
@@ -64,6 +63,8 @@ def indices_to_sentences(sentence_arr, matched_indices) -> deque:
     return final_result
         
 def main():
+    tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+    ToneItPipeline = LightPipeline(PipelineModel.load('ToneItPipeline'))
     while True:
         try:
             link = input("link for text to analyze?")
@@ -74,8 +75,8 @@ def main():
         final_result = []
         for paragraph in paragraph_list:
             sentence_arr = tokenizer.tokenize(paragraph)
-            sentence_results = predict_sentences(sentence_arr)
-            paragraph_result = predict_with_engine(paragraph)
+            sentence_results = predict_sentences(ToneItPipeline, sentence_arr)
+            paragraph_result = predict_with_engine(ToneItPipeline, paragraph)
             
             temp_result = {
                 'paragraphTone': paragraph_result,
