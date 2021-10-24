@@ -2,5 +2,5 @@
 .DS_store
 
 # ignore the heavy pipeline
-ToneItPipeline.tar.gz
-ToneItPipeline/
+ToneItPipeline*.tar.gz
+ToneItPipeline*/
